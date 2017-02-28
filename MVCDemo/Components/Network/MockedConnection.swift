@@ -15,12 +15,12 @@ final class MockedConnection: Connectable {
     init(fileName: String) {
         self.fileName = fileName
     }
-    
-    func makeConnection(resource: Resource, completion: Result<NSData, Error> -> Void) {
+
+    func makeConnection(_ resource: Resource, completion: @escaping (Result<Data, MyError>) -> Void) {
         
-        let path = NSBundle.mainBundle().pathForResource(fileName, ofType: "json")!
-        let data = NSData(contentsOfFile: path)!
+        let path = Bundle.main.path(forResource: fileName, ofType: "json")!
+        let data = try! Data(contentsOf: URL(fileURLWithPath: path))
         
-        completion(.Success(data))
+        completion(.success(data))
     }
 }

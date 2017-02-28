@@ -22,25 +22,25 @@
 
 import UIKit
 
-final class TableViewDataSource<Model, Cell: UITableViewCell where Cell: Reusable, Cell: CellConfigurable, Model == Cell.Controller>: NSObject, UITableViewDataSource {
+final class TableViewDataSource<Model, Cell: UITableViewCell>: NSObject, UITableViewDataSource where Cell: Reusable, Cell: CellConfigurable, Model == Cell.Controller {
     
     var dataSource: [Model] = [] {
             didSet { tableView.reloadData() }
     }
     
-    private unowned var tableView: UITableView
+    fileprivate unowned var tableView: UITableView
 
     init(tableView: UITableView) {
         self.tableView = tableView
         
-        tableView.registerReusableCell(Cell)
+        tableView.registerReusableCell(Cell.self)
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell: Cell = tableView.dequeueReusableCell(indexPath: indexPath)
         cell.cellController = dataSource[indexPath.row]

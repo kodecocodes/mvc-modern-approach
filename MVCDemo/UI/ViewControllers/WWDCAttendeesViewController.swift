@@ -24,9 +24,9 @@ import UIKit
 
 final class WWDCAttendeesViewController: UIViewController {
     
-    private let attendeesHandler: WWDCAttendeesHandler
-    private var atteendeesUIController: WWDCAttendeesUIController!
-    private let tableView = UITableView(frame: .zero)
+    fileprivate let attendeesHandler: WWDCAttendeesHandler
+    fileprivate var atteendeesUIController: WWDCAttendeesUIController!
+    fileprivate let tableView = UITableView(frame: .zero)
     
     init(attendeesHandler: WWDCAttendeesHandler) {
         

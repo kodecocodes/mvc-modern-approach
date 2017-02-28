@@ -23,47 +23,47 @@
 import Foundation
 
 protocol Mappable {
-    static func mapToModel(o: AnyObject) -> Result<Self, Error>
+    static func mapToModel(_ o: AnyObject) -> Result<Self, MyError>
 }
 
-func parse<T: Mappable>(data: NSData, completion: Result<[T], Error> -> Void) {
+func parse<T: Mappable>(_ data: Data, completion: (Result<[T], MyError>) -> Void) {
     
-    let decodedData: Result<AnyObject, Error> = decodeData(data)
+    let decodedData: Result<AnyObject, MyError> = decodeData(data)
         
     switch decodedData {
         
-    case .Success(let result):
+    case .success(let result):
         
-        guard let array = result as? [AnyObject] else { completion(.Failure(.Parser)); return }
+        guard let array = result as? [AnyObject] else { completion(.failure(.parser)); return }
         
-        let result: Result<[T], Error> = arrayToModels(array)
+        let result: Result<[T], MyError> = arrayToModels(array)
         completion(result)
         
-    case .Failure:
-        completion(.Failure(.Parser))
+    case .failure:
+        completion(.failure(.parser))
     }
 }
 
-private func arrayToModels<T: Mappable>(objects: [AnyObject]) -> Result<[T], Error> {
+private func arrayToModels<T: Mappable>(_ objects: [AnyObject]) -> Result<[T], MyError> {
     
     var convertAndCleanArray: [T] = []
     
     for object in objects {
         
-        guard case .Success(let model) = T.mapToModel(object) else { continue }
+        guard case .success(let model) = T.mapToModel(object) else { continue }
         convertAndCleanArray.append(model)
     }
     
-    return .Success(convertAndCleanArray)
+    return .success(convertAndCleanArray)
 }
 
-private func decodeData(data: NSData) -> Result<AnyObject, Error> {
+private func decodeData(_ data: Data) -> (Result<AnyObject, MyError>) {
     
     do {
-        let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
-        return .Success(json)
+        let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
+        return .success(json as AnyObject)
     }
     catch {
-        return .Failure(.Parser)
+        return .failure(.parser)
     }
 }

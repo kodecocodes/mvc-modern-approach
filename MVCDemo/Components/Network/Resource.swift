@@ -42,17 +42,17 @@ public enum Method: String {
 extension Resource {
     
     /// Used to transform a Resource into a NSURLRequest
-    public func toRequest(baseURL: NSURL) -> NSURLRequest {
+    public func toRequest(_ baseURL: URL) -> URLRequest {
         
-        let components = NSURLComponents(URL: baseURL, resolvingAgainstBaseURL: false)
+        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
         
         components?.path = path
         
-        let finalURL = components?.URL ?? baseURL
-        let request = NSMutableURLRequest(URL: finalURL)
+        let finalURL = components?.url ?? baseURL
+        let request = NSMutableURLRequest(url: finalURL)
         
-        request.HTTPMethod = method.rawValue
+        request.httpMethod = method.rawValue
         
-        return request
+        return request as URLRequest
     }
 }
