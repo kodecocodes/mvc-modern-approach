@@ -38,7 +38,7 @@ final class AttendeeCell: UITableViewCell {
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
     }
     
     @available(*, unavailable)

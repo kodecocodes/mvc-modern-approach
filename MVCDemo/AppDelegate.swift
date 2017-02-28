@@ -25,9 +25,9 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
+    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         let wwdcAttendeesViewController = WWDCAttendeesViewController(attendeesHandler: createController())
         let navigationController = UINavigationController(rootViewController: wwdcAttendeesViewController)
@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 private func createController() -> WWDCAttendeesController {
     
     //let mockedConnection = MockedConnection(fileName: "attendees")
-    let connection = Connection(baseURL: NSURL(string: "https://dl.dropboxusercontent.com")!)
+    let connection = Connection(baseURL: URL(string: "https://dl.dropboxusercontent.com")!)
     let attendeesController = WWDCAttendeesController(connectable: connection)
     
     return attendeesController

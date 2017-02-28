@@ -24,11 +24,11 @@ import UIKit
 
 final class WWDCAttendeesUIController {
     
-    private unowned var view: UIView
-    private let loadingView: LoadingView
-    private let tableViewDataSource: TableViewDataSource<AttendeeCellController, AttendeeCell>
+    fileprivate unowned var view: UIView
+    fileprivate let loadingView: LoadingView
+    fileprivate let tableViewDataSource: TableViewDataSource<AttendeeCellController, AttendeeCell>
     
-    var state: UIState = .Loading {
+    var state: UIState = .loading {
         willSet(newState) {
             update(newState)
         }
@@ -47,12 +47,12 @@ final class WWDCAttendeesUIController {
 
 extension WWDCAttendeesUIController: WWDCAttendesDelegate {
     
-    func update(newState: UIState) {
+    func update(_ newState: UIState) {
         
         switch(state, newState) {
             
-        case (.Loading, .Loading): loadingToLoading()
-        case (.Loading, .Success(let attendees)): loadingToSuccess(attendees)
+        case (.loading, .loading): loadingToLoading()
+        case (.loading, .success(let attendees)): loadingToSuccess(attendees)
             
         default: fatalError("Not yet implemented \(state) to \(newState)")
         }
@@ -63,7 +63,7 @@ extension WWDCAttendeesUIController: WWDCAttendesDelegate {
         loadingView.frame = CGRect(origin: .zero, size: view.frame.size)
     }
     
-    func loadingToSuccess(attendees: [Attendee]) {
+    func loadingToSuccess(_ attendees: [Attendee]) {
         loadingView.removeFromSuperview()
         tableViewDataSource.dataSource = attendees.map(AttendeeCellController.init)
     }
