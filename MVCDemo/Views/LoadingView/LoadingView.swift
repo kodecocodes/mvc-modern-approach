@@ -22,23 +22,27 @@
 
 import UIKit
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        let url = URL(string: "https://dl.dropboxusercontent.com")!
-        let connection = Connection(baseURL: url)
-        let attendeesController = WWDCAttendeesController(connectable: connection)
+final class LoadingView: UIView {
+    
+    fileprivate let spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    
+    override init(frame: CGRect) {
         
-        let attendeesVC = WWDCAttendeesViewController(attendeesHandler: attendeesController)
-        let navigationController = UINavigationController(rootViewController: attendeesVC)
-                
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
+        spinner.startAnimating()
         
-        return true
+        super.init(frame: frame)
+        
+        addSubview(spinner)
+        backgroundColor = UIColor.white
+    }
+    
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        spinner.center = center
     }
 }

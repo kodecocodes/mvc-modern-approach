@@ -20,25 +20,26 @@
  * THE SOFTWARE.
  */
 
-import UIKit
+import Foundation
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        let url = URL(string: "https://dl.dropboxusercontent.com")!
-        let connection = Connection(baseURL: url)
-        let attendeesController = WWDCAttendeesController(connectable: connection)
+struct Resource {
+    public let relativePath: String
+    public let httpMethod: HTTPMethod
+    
+    public func urlRequest(for baseURL: URL) -> URLRequest {
+        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+        components?.path = relativePath
         
-        let attendeesVC = WWDCAttendeesViewController(attendeesHandler: attendeesController)
-        let navigationController = UINavigationController(rootViewController: attendeesVC)
-                
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
+        let finalURL = components?.url ?? baseURL
+        let request = NSMutableURLRequest(url: finalURL)
+        request.httpMethod = httpMethod.description
         
-        return true
+        return request as URLRequest
+    }
+}
+
+extension Resource: CustomStringConvertible {
+    var description: String {
+        return "Path:\(relativePath)\nMethod:\(httpMethod.rawValue)\n"
     }
 }
