@@ -20,25 +20,18 @@
  * THE SOFTWARE.
  */
 
-import UIKit
+struct Attendee {
+    let name: String
+    let company: String
+}
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        let url = URL(string: "https://dl.dropboxusercontent.com")!
-        let connection = Connection(baseURL: url)
-        let attendeesController = WWDCAttendeesController(connectable: connection)
+extension Attendee: JSONConvertible {
+    static func model(for json: JSON) -> Attendee? {
+        guard
+            let name = json["name"] as? String,
+            let company = json["company"] as? String
+        else { return nil }
         
-        let attendeesVC = WWDCAttendeesViewController(attendeesHandler: attendeesController)
-        let navigationController = UINavigationController(rootViewController: attendeesVC)
-                
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
-        
-        return true
+        return Attendee(name: name, company: company)
     }
 }

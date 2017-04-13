@@ -22,23 +22,28 @@
 
 import UIKit
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class TableViewDataSource<Model, Cell: UITableViewCell>: NSObject, UITableViewDataSource where Cell: Reusable, Cell: CellConfigurable, Model == Cell.Controller {
+    
+    var dataSource: [Model] = [] {
+            didSet { tableView.reloadData() }
+    }
+    
+    fileprivate unowned var tableView: UITableView
 
-    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        let url = URL(string: "https://dl.dropboxusercontent.com")!
-        let connection = Connection(baseURL: url)
-        let attendeesController = WWDCAttendeesController(connectable: connection)
+    init(tableView: UITableView) {
+        self.tableView = tableView
         
-        let attendeesVC = WWDCAttendeesViewController(attendeesHandler: attendeesController)
-        let navigationController = UINavigationController(rootViewController: attendeesVC)
-                
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
+        tableView.registerReusableCell(Cell.self)
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataSource.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        return true
+        let cell: Cell = tableView.dequeueReusableCell(indexPath: indexPath)
+        cell.cellController = dataSource[indexPath.row]
+        return cell
     }
 }

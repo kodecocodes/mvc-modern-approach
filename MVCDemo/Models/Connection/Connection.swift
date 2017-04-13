@@ -20,25 +20,32 @@
  * THE SOFTWARE.
  */
 
-import UIKit
+import Foundation
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class Connection {
+    fileprivate let baseURL: URL
+    fileprivate let session: URLSession
+    
+    init(baseURL: URL, sessionConfiguration: URLSessionConfiguration) {
+        self.baseURL = baseURL
+        self.session = URLSession(configuration: sessionConfiguration)
+    }
+    
+    convenience init(baseURL: URL) {
+        self.init(baseURL: baseURL, sessionConfiguration: .default)
+    }
+}
 
-    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        let url = URL(string: "https://dl.dropboxusercontent.com")!
-        let connection = Connection(baseURL: url)
-        let attendeesController = WWDCAttendeesController(connectable: connection)
+extension Connection: Connectable {
+    func connect(to resource: Resource, with completionHandler: @escaping (ConnectionResponse) -> Void) {
+        let request = resource.urlRequest(for: baseURL)
         
-        let attendeesVC = WWDCAttendeesViewController(attendeesHandler: attendeesController)
-        let navigationController = UINavigationController(rootViewController: attendeesVC)
-                
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
-        
-        return true
+        session.dataTask(with: request) { (data, response, error) in
+            switch (data, error) {
+            case (let data?, _): completionHandler(.success(data))
+            case (_, let error?): completionHandler(.failure(.failedConnection(error.localizedDescription)))
+            default: break
+            }
+        }.resume()
     }
 }

@@ -22,23 +22,40 @@
 
 import UIKit
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow? = UIWindow(frame: UIScreen.main.bounds)
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        let url = URL(string: "https://dl.dropboxusercontent.com")!
-        let connection = Connection(baseURL: url)
-        let attendeesController = WWDCAttendeesController(connectable: connection)
+final class WWDCAttendeesViewController: UIViewController {
+    
+    fileprivate let attendeesHandler: WWDCAttendeesHandler
+    fileprivate var atteendeesUIController: WWDCAttendeesUIController!
+    fileprivate let tableView = UITableView(frame: .zero)
+    
+    init(attendeesHandler: WWDCAttendeesHandler) {
         
-        let attendeesVC = WWDCAttendeesViewController(attendeesHandler: attendeesController)
-        let navigationController = UINavigationController(rootViewController: attendeesVC)
-                
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
+        self.attendeesHandler = attendeesHandler
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
-        return true
+        tableView.frame = view.frame
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.addSubview(tableView)
+        tableView.tableFooterView = UIView()
+        
+        title = NSLocalizedString("wwdc_attendees", comment: "")
+        
+        atteendeesUIController = WWDCAttendeesUIController(view: view, tableView: tableView)
+        attendeesHandler.delegate = atteendeesUIController
+        
+        attendeesHandler.fetchAttendees()
     }
 }
