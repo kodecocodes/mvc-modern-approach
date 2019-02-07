@@ -23,9 +23,9 @@
 import Foundation
 
 enum UIState {
-    case Loading
-    case Success([Attendee])
-    case Failure(Error)
+    case loading
+    case success([Attendee])
+    case failure(Error)
 }
 
 protocol WWDCAttendesDelegate: class {
@@ -51,39 +51,39 @@ final class WWDCAttendeesController: WWDCAttendeesHandler {
         
         guard let delegate = self.delegate else { fatalError("did you forget to set the delegate?")}
         
-        delegate.state = .Loading
+        delegate.state = .loading
         let resource = Resource(path: "/u/14102938/attendees.json", method: .GET)
         
-        let parsingCompletion = createParsingCompletion(delegate)
-        let networkCompletion = createNetworkCompletion(delegate, parseCompletion: parsingCompletion)
+        let parsingCompletion = createParsingCompletion(delegate: delegate)
+        let networkCompletion = createNetworkCompletion(delegate: delegate, parseCompletion: parsingCompletion)
         
-        connectable.makeConnection(resource, completion: networkCompletion)
+        connectable.makeConnection(resource: resource, completion: networkCompletion)
     }
 }
 
-private typealias ParseCompletion = Result<[Attendee], Error> -> Void
-private typealias NetworkCompletion = Result<NSData, Error> -> Void
+private typealias ParseCompletion = (Result<[Attendee], Error>) -> Void
+private typealias NetworkCompletion = (Result<Data, Error>) -> Void
 
 private func createParsingCompletion(delegate: WWDCAttendesDelegate) -> ParseCompletion {
     
     return { atendeesResult in
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             switch atendeesResult {
-            case .Success(let atendees): delegate.state = .Success(atendees)
-            case .Failure(let error): delegate.state = .Failure(error)
+            case .success(let atendees): delegate.state = .success(atendees)
+            case .failure(let error): delegate.state = .failure(error)
             }
         }
     }
 }
 
-private func createNetworkCompletion(delegate: WWDCAttendesDelegate, parseCompletion: ParseCompletion) -> NetworkCompletion {
+private func createNetworkCompletion(delegate: WWDCAttendesDelegate, parseCompletion: @escaping ParseCompletion) -> NetworkCompletion {
     
     return { dataResult in
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+        DispatchQueue.global(qos: .background).async {
             print(dataResult)
             switch dataResult {
-            case .Success(let data): parse(data, completion: parseCompletion)
-            case .Failure(let error): delegate.state = .Failure(error)
+            case .success(let data): parse(data: data, completion: parseCompletion)
+            case .failure(let error): delegate.state = .failure(error)
             }
         }
     }

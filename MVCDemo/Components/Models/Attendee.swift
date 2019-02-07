@@ -27,14 +27,14 @@ struct Attendee {
 
 extension Attendee: Mappable {
     
-    static func mapToModel(o: AnyObject) -> Result<Attendee, Error> {
+    static func mapToModel(o: Any) -> Result<Attendee, Error> {
         
         guard
-            let dic = o as? [String: AnyObject],
+            let dic = o as? [String: Any],
             let name = dic["name"] as? String,
             let company = dic["company"] as? String
-        else { return .Failure(.Parser) }
+        else { return .failure(.parser) }
         
-        return .Success(Attendee(name: name, company: company))
+        return .success(Attendee(name: name, company: company))
     }
 }
