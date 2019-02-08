@@ -28,9 +28,9 @@ final class WWDCAttendeesUIController {
     private let loadingView: LoadingView
     private let tableViewDataSource: TableViewDataSource<AttendeeCellController, AttendeeCell>
     
-    var state: UIState = .Loading {
+    var state: UIState = .loading {
         willSet(newState) {
-            update(newState)
+            update(newState: newState)
         }
     }
     
@@ -41,7 +41,7 @@ final class WWDCAttendeesUIController {
         self.tableViewDataSource = TableViewDataSource<AttendeeCellController, AttendeeCell>(tableView: tableView)
         
         tableView.dataSource = tableViewDataSource
-        update(state)
+        update(newState: state)
     }
 }
 
@@ -51,8 +51,8 @@ extension WWDCAttendeesUIController: WWDCAttendesDelegate {
         
         switch(state, newState) {
             
-        case (.Loading, .Loading): loadingToLoading()
-        case (.Loading, .Success(let attendees)): loadingToSuccess(attendees)
+        case (.loading, .loading): loadingToLoading()
+        case (.loading, .success(let attendees)): loadingToSuccess(attendees: attendees)
             
         default: fatalError("Not yet implemented \(state) to \(newState)")
         }

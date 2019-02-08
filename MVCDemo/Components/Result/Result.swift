@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-enum Result<T, E: ErrorType> {
-    case Success(T)
-    case Failure(E)
+enum Result<T, E: Swift.Error> {
+    case success(T)
+    case failure(Error)
 }

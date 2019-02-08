@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-enum Error: ErrorType {
-    case Network(String)
-    case Parser
+enum Error: Swift.Error {
+    case network(String)
+    case parser
 }

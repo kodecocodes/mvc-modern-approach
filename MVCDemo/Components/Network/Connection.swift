@@ -23,14 +23,14 @@
 import Foundation
 
 protocol Connectable {
-    func makeConnection(resource: Resource, completion: Result<NSData, Error> -> Void)
+    func makeConnection(resource: Resource, completion: @escaping (Result<Data, Error>) -> Void)
 }
 
 final class Connection {
-    private let session: NSURLSession
-    private let baseURL: NSURL
+    private let session: URLSession
+    private let baseURL: URL
     
-    init(baseURL: NSURL, session: NSURLSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())) {
+    init(baseURL: URL, session: URLSession = URLSession(configuration: .default)) {
         self.baseURL = baseURL
         self.session = session
     }
@@ -38,14 +38,14 @@ final class Connection {
 
 extension Connection: Connectable {
     
-    func makeConnection(resource: Resource, completion: Result<NSData, Error> -> Void) {
+    func makeConnection(resource: Resource, completion: @escaping (Result<Data, Error>) -> Void) {
         
-        let request = resource.toRequest(baseURL)
+        let request = resource.toRequest(baseURL: baseURL)
         
-        session.dataTaskWithRequest(request) { (data, response, error) in
+        session.dataTask(with: request) { (data, response, error) in
             switch (data, error) {
-            case(let data?, _): completion(.Success(data))
-            case(_, let error?): completion(.Failure(.Network(error.description)))
+            case(let data?, _): completion(.success(data))
+            case(_, let error?): completion(.failure(.network(error.localizedDescription)))
             default: break
             }
         }.resume()
