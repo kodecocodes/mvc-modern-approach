@@ -27,17 +27,17 @@ protocol Reusable: class {
 }
 
 extension Reusable {
-    static var reuseIdentifier: String { return String(Self) }
+    static var reuseIdentifier: String { return String(describing: type(of: self)) }
 }
 
 extension UITableView {
     
-    func registerReusableCell<T: UITableViewCell where T: Reusable>(_: T.Type) {
-        registerClass(T.self, forCellReuseIdentifier: T.reuseIdentifier)
+    func registerReusableCell<T: UITableViewCell>(_: T.Type) where T: Reusable {
+        register(T.self, forCellReuseIdentifier: T.reuseIdentifier)
     }
     
-    func dequeueReusableCell<T: UITableViewCell where T: Reusable>(indexPath indexPath: NSIndexPath) -> T {
-        return dequeueReusableCellWithIdentifier(T.reuseIdentifier, forIndexPath: indexPath) as! T
+    func dequeueReusableCell<T: UITableViewCell>(indexPath: IndexPath) -> T where T: Reusable {
+        return dequeueReusableCell(withIdentifier: T.reuseIdentifier, for: indexPath) as! T
     }
 }
 

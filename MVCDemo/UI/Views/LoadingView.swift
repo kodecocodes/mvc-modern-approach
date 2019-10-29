@@ -24,7 +24,7 @@ import UIKit
 
 final class LoadingView: UIView {
     
-    private let spinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+    private let spinner = UIActivityIndicatorView(style: .gray)
     
     override init(frame: CGRect) {
         
@@ -33,7 +33,7 @@ final class LoadingView: UIView {
         super.init(frame: frame)
         
         addSubview(spinner)
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = .white
     }
     
     @available(*, unavailable)
